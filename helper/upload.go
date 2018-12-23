@@ -12,10 +12,6 @@ type JsonStatus struct {
 	Message string
 }
 
-func Validate(c *gin.Context)  {
-
-}
-
 
 func Upload(c *gin.Context)  {
 	//name := c.PostForm("name")
@@ -32,16 +28,17 @@ func Upload(c *gin.Context)  {
 
 	for _, file := range files {
 		// Validate Your File Type
-		if file.Header.Get("Content-Type") != "image/png" {
-			c.JSON(http.StatusOK, JsonStatus{400,"Not PNG"})
+		val := Validate(file,"image/png")
+		if !val {
+			c.JSON(http.StatusOK, JsonStatus{400,"Not Valid"})
 			return
-		}
+		}else{
+			filename := filepath.Base(file.Filename)
 
-		filename := filepath.Base(file.Filename)
-
-		if err := c.SaveUploadedFile(file, "./files/"+filename); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-			return
+			if err := c.SaveUploadedFile(file, "./files/"+filename); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
 		}
 	}
 

@@ -7,10 +7,7 @@
     go get github.com/gin-gonic/gin
     
 ### Filter File Type
-    if file.Header.Get("Content-Type") != "image/png" {
-    	c.JSON(http.StatusOK, JsonStatus{400,"Not Image"})
-    	return
-    }
+    val := Validate(file,"image/png")
     
 ### Run
     go run main.go
